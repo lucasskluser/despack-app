@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, ContentContainer, Dropdown, Form, Header, Logo, Subheader, Watermark, WatermarkContainer } from "./style";
+import { Container, ContentContainer, Header, Logo, Subheader, Watermark, WatermarkContainer } from "./style";
 
 export function Welcome() {
   return (
