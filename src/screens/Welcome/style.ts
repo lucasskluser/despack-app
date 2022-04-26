@@ -41,3 +41,26 @@ export const Subheader = styled.Text`
   color: #6c6c80;
   margin-top: 25px;
 `;
+
+export const Form = styled.View`
+  margin-top: 50px;
+`;
+
+export const TextInput = styled.TextInput`
+  height: 60px;
+  background-color: #FFF;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  padding: 0 24px;
+  font-size: 16px;
+`;
+
+export const RectButton = styled.Button`
+  background-color: #34CB79;
+  height: 60px;
+  flex-direction: row;
+  border-radius: 10px;
+  overflow: hidden;
+  align-items: center;
+  margin-top: 8px;
+`;
