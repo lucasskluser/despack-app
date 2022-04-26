@@ -45,13 +45,16 @@ export function Welcome() {
           <Form>
             <TextInput placeholder="Digite o estado" />
             <TextInput placeholder="Digite a cidade" />
-            <RectButton style={styles.button}>
+            <RectButton style={[styles.button, styles.buttonSearch]}>
               <View style={styles.buttonIcon}>
                 <Text>
-                  <Icon name="arrow-right" color="#FFF" size={24} />
+                  <Icon name="search" color="#FFF" size={24} />
                 </Text>
               </View>
               <Text style={styles.buttonText}>Buscar</Text>
+            </RectButton>
+            <RectButton style={[styles.button, styles.buttonSignIn]}>
+              <Text style={styles.buttonText}>Entrar</Text>
             </RectButton>
           </Form>
         </KeyboardAvoidingView>
@@ -62,7 +65,6 @@ export function Welcome() {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#34CB79",
     height: 60,
     flexDirection: "row",
     borderRadius: 10,
@@ -88,5 +90,13 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontFamily: "Roboto_500Medium",
     fontSize: 16,
+  },
+
+  buttonSearch: {
+    backgroundColor: "#00C5FF",
+  },
+
+  buttonSignIn: {
+    backgroundColor: "#6C6C80",
   },
 });
