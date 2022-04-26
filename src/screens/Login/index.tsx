@@ -70,7 +70,7 @@ export function Login() {
             </RectButton>
             <RectButton style={[styles.button, styles.buttonSignUp]}>
               <Text style={[styles.buttonText, styles.buttonTextDark]}>
-                Criar uma conta
+                CRIAR UMA CONTA
               </Text>
             </RectButton>
           </Form>
