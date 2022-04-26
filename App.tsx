@@ -11,6 +11,7 @@ import AppLoading from "expo-app-loading";
 import THEME from './src/theme';
 
 import { Splash } from "./src/screens/Splash";
+import { Welcome } from "./src/screens/Welcome";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -25,7 +26,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={THEME}>
-      <Splash />
+      <Welcome />
     </ThemeProvider>
   );
 }
