@@ -18,9 +18,11 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  TouchableNativeFeedback,
 } from "react-native";
+import { Login } from "../Login";
 
-export function Welcome() {
+export function Welcome({ navigation }) {
   return (
     <Container>
       <WatermarkContainer>
@@ -45,17 +47,21 @@ export function Welcome() {
           <Form>
             <TextInput placeholder="Digite o estado" />
             <TextInput placeholder="Digite a cidade" />
-            <RectButton style={[styles.button, styles.buttonSearch]}>
-              <View style={styles.buttonIcon}>
-                <Text>
-                  <Icon name="search" color="#FFF" size={24} />
-                </Text>
+            <TouchableNativeFeedback>
+              <View style={[styles.button, styles.buttonSearch]}>
+                <View style={styles.buttonIcon}>
+                  <Text>
+                    <Icon name="search" color="#FFF" size={24} />
+                  </Text>
+                </View>
+                <Text style={styles.buttonText}>Buscar</Text>
               </View>
-              <Text style={styles.buttonText}>Buscar</Text>
-            </RectButton>
-            <RectButton style={[styles.button, styles.buttonSignIn]}>
-              <Text style={styles.buttonText}>Entrar</Text>
-            </RectButton>
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={() => navigation.navigate(Login.name)}>
+              <View style={[styles.button, styles.buttonSignIn]}>
+                <Text style={styles.buttonText}>Entrar</Text>
+              </View>
+            </TouchableNativeFeedback>
           </Form>
         </KeyboardAvoidingView>
       </ContentContainer>

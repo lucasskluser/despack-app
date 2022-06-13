@@ -1,14 +1,11 @@
 import React from "react";
-import { RectButton } from "react-native-gesture-handler";
 import { Feather as Icon } from "@expo/vector-icons";
 import {
   Container,
   ContentContainer,
-  Form,
   Header,
   Logo,
   Subheader,
-  TextInput,
   Watermark,
   WatermarkContainer,
 } from "./style";
@@ -18,6 +15,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  TouchableNativeFeedback,
 } from "react-native";
 
 export function AccountCreated() {
@@ -39,11 +37,13 @@ export function AccountCreated() {
           Para ativar sua conta, clique no link que foi enviado para o seu
           e-mail.
         </Subheader>
-        <RectButton style={[styles.button, styles.buttonBack]}>
-          <Text style={[styles.buttonText, styles.buttonTextDark]}>
-            CRIAR UMA CONTA
-          </Text>
-        </RectButton>
+        <TouchableNativeFeedback>
+          <View style={[styles.button, styles.buttonBack]}>
+            <Text style={[styles.buttonText, styles.buttonTextDark]}>
+              VOLTAR PARA A TELA DE LOGIN
+            </Text>
+          </View>
+        </TouchableNativeFeedback>
       </ContentContainer>
     </Container>
   );
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   buttonBack: {
     backgroundColor: "transparent",
     height: 40,
-    marginTop: 35
+    marginTop: 35,
   },
 
   buttonTextDark: {

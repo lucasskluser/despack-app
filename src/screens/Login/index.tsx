@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { RectButton } from "react-native-gesture-handler";
+import React, { useEffect, useState } from "react";
 import { Feather as Icon } from "@expo/vector-icons";
 import {
   Container,
@@ -19,10 +18,17 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ToastAndroid,
+  TouchableNativeFeedback,
 } from "react-native";
+import { SignUp } from "../SignUp";
 
-export function Login() {
+export function Login({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    // navigation.reset
+  }, []);
 
   return (
     <Container>
@@ -37,14 +43,16 @@ export function Login() {
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <RectButton style={[styles.buttonBack]}>
-            <View style={styles.buttonBackIcon}>
-              <Text>
-                <Icon name="arrow-left" color="#6c6c80" size={24} />
-              </Text>
+          <TouchableNativeFeedback onPress={() => navigation.goBack() }>
+            <View style={[styles.buttonBack]}>
+              <View style={styles.buttonBackIcon}>
+                <Text>
+                  <Icon name="arrow-left" color="#6c6c80" size={24} />
+                </Text>
+              </View>
+              <Text style={styles.buttonBackText}>TELA INICIAL</Text>
             </View>
-            <Text style={styles.buttonBackText}>TELA INICIAL</Text>
-          </RectButton>
+          </TouchableNativeFeedback>
           <Logo
             resizeMode="contain"
             source={require("../../assets/despack-logo.png")}
@@ -65,14 +73,22 @@ export function Login() {
                 onPress={() => setShowPassword(!showPassword)}
               />
             </InputGroup>
-            <RectButton style={[styles.button, styles.buttonSignIn]}>
-              <Text style={styles.buttonText}>Entrar</Text>
-            </RectButton>
-            <RectButton style={[styles.button, styles.buttonSignUp]}>
-              <Text style={[styles.buttonText, styles.buttonTextDark]}>
-                CRIAR UMA CONTA
-              </Text>
-            </RectButton>
+            <TouchableNativeFeedback>
+              <View style={[styles.button, styles.buttonSignIn]}>
+                <Text style={styles.buttonText}>Entrar</Text>
+              </View>
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback
+              onPress={() =>
+                navigation.navigate(SignUp.name)
+              }
+            >
+              <View style={[styles.button, styles.buttonSignUp]}>
+                <Text style={[styles.buttonText, styles.buttonTextDark]}>
+                  CRIAR UMA CONTA
+                </Text>
+              </View>
+            </TouchableNativeFeedback>
           </Form>
         </KeyboardAvoidingView>
       </ContentContainer>

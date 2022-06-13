@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { RectButton } from "react-native-gesture-handler";
 import { Feather as Icon } from "@expo/vector-icons";
 import {
   Container,
@@ -19,9 +18,13 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  TouchableNativeFeedback,
 } from "react-native";
+import { AccountCreated } from "../AccountCreated";
+import { Welcome } from "../Welcome";
+import { Login } from "../Login";
 
-export function SignUp() {
+export function SignUp({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -58,18 +61,38 @@ export function SignUp() {
                 onPress={() => setShowPassword(!showPassword)}
               />
             </InputGroup>
-            <TextInput placeholder="Confirme sua senha" style={{ marginBottom: 8 }} />
+            <TextInput
+              placeholder="Confirme sua senha"
+              style={{ marginBottom: 8 }}
+            />
             <Text style={styles.agreementText}>
-              Ao criar sua conta você concorda com os nossos <Text style={styles.agreementTextBold}>Termos de Uso</Text> e nossa <Text style={styles.agreementTextBold}>Política de Privacidade</Text>.
-            </Text>
-            <RectButton style={[styles.button, styles.buttonSignIn]}>
-              <Text style={styles.buttonText}>Cria conta</Text>
-            </RectButton>
-            <RectButton style={[styles.button, styles.buttonSignUp]}>
-              <Text style={[styles.buttonText, styles.buttonTextDark]}>
-                FAZER LOGIN
+              Ao criar sua conta você concorda com os nossos{" "}
+              <Text style={styles.agreementTextBold}>Termos de Uso</Text> e
+              nossa{" "}
+              <Text style={styles.agreementTextBold}>
+                Política de Privacidade
               </Text>
-            </RectButton>
+              .
+            </Text>
+            <TouchableNativeFeedback
+              onPress={() =>
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: Welcome.name }, { name: Login.name }, { name: AccountCreated.name }],
+                })
+              }
+            >
+              <View style={[styles.button, styles.buttonSignIn]}>
+                <Text style={styles.buttonText}>Cria conta</Text>
+              </View>
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={() => navigation.goBack()}>
+              <View style={[styles.button, styles.buttonSignUp]}>
+                <Text style={[styles.buttonText, styles.buttonTextDark]}>
+                  FAZER LOGIN
+                </Text>
+              </View>
+            </TouchableNativeFeedback>
           </Form>
         </KeyboardAvoidingView>
       </ContentContainer>
@@ -147,10 +170,10 @@ const styles = StyleSheet.create({
   agreementText: {
     textAlign: "center",
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
 
   agreementTextBold: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });
