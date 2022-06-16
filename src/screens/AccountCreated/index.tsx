@@ -9,16 +9,11 @@ import {
   Watermark,
   WatermarkContainer,
 } from "./style";
-import {
-  View,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableNativeFeedback,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableNativeFeedback } from "react-native";
+import { Welcome } from "../Welcome";
+import { Login } from "../Login";
 
-export function AccountCreated() {
+export function AccountCreated({ navigation }) {
   return (
     <Container>
       <WatermarkContainer>
@@ -37,7 +32,15 @@ export function AccountCreated() {
           Para ativar sua conta, clique no link que foi enviado para o seu
           e-mail.
         </Subheader>
-        <TouchableNativeFeedback>
+        <TouchableNativeFeedback
+          onPress={navigation.reset({
+            index: 0,
+            routes: [
+              { name: Welcome.name },
+              { name: Login.name },
+            ],
+          })}
+        >
           <View style={[styles.button, styles.buttonBack]}>
             <Text style={[styles.buttonText, styles.buttonTextDark]}>
               VOLTAR PARA A TELA DE LOGIN

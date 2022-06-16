@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   useFonts,
   Roboto_400Regular,
@@ -17,6 +17,7 @@ import { AccountCreated } from "./src/screens/AccountCreated";
 import { Login } from "./src/screens/Login";
 import { SignUp } from "./src/screens/SignUp";
 import { Welcome } from "./src/screens/Welcome";
+import { Map } from "./src/screens/Map";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +36,7 @@ export default function App() {
     <ThemeProvider theme={THEME}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName={Splash.name}
+          initialRouteName={Map.name}
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name={Splash.name} component={Splash} />
@@ -43,6 +44,7 @@ export default function App() {
           <Stack.Screen name={Login.name} component={Login} />
           <Stack.Screen name={SignUp.name} component={SignUp} />
           <Stack.Screen name={AccountCreated.name} component={AccountCreated} />
+          <Stack.Screen name={Map.name} component={Map} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

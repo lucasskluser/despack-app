@@ -22,6 +22,7 @@ import {
   TouchableNativeFeedback,
 } from "react-native";
 import { SignUp } from "../SignUp";
+import { Map } from "../Map";
 
 export function Login({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +44,7 @@ export function Login({ navigation }) {
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <TouchableNativeFeedback onPress={() => navigation.goBack() }>
+          <TouchableNativeFeedback onPress={() => navigation.goBack()}>
             <View style={[styles.buttonBack]}>
               <View style={styles.buttonBackIcon}>
                 <Text>
@@ -73,15 +74,15 @@ export function Login({ navigation }) {
                 onPress={() => setShowPassword(!showPassword)}
               />
             </InputGroup>
-            <TouchableNativeFeedback>
+            <TouchableNativeFeedback
+              onPress={() => navigation.navigate(Map.name)}
+            >
               <View style={[styles.button, styles.buttonSignIn]}>
                 <Text style={styles.buttonText}>Entrar</Text>
               </View>
             </TouchableNativeFeedback>
             <TouchableNativeFeedback
-              onPress={() =>
-                navigation.navigate(SignUp.name)
-              }
+              onPress={() => navigation.navigate(SignUp.name)}
             >
               <View style={[styles.button, styles.buttonSignUp]}>
                 <Text style={[styles.buttonText, styles.buttonTextDark]}>

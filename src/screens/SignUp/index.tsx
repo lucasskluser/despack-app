@@ -22,7 +22,6 @@ import {
 } from "react-native";
 import { AccountCreated } from "../AccountCreated";
 import { Welcome } from "../Welcome";
-import { Login } from "../Login";
 
 export function SignUp({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -78,7 +77,7 @@ export function SignUp({ navigation }) {
               onPress={() =>
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: Welcome.name }, { name: Login.name }, { name: AccountCreated.name }],
+                  routes: [{ name: Welcome.name }, { name: "Login" }, { name: AccountCreated.name }],
                 })
               }
             >
