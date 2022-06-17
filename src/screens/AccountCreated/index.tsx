@@ -10,8 +10,6 @@ import {
   WatermarkContainer,
 } from "./style";
 import { View, Text, StyleSheet, TouchableNativeFeedback } from "react-native";
-import { Welcome } from "../Welcome";
-import { Login } from "../Login";
 
 export function AccountCreated({ navigation }) {
   return (
@@ -36,8 +34,8 @@ export function AccountCreated({ navigation }) {
           onPress={navigation.reset({
             index: 0,
             routes: [
-              { name: Welcome.name },
-              { name: Login.name },
+              { name: "Welcome" },
+              { name: "Login" },
             ],
           })}
         >

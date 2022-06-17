@@ -111,3 +111,26 @@ export const MarkerPin = styled.Image`
   width: 18px;
   height: 18px;
 `;
+
+export const MarkerCard = styled.View`
+  position: absolute;
+  bottom: 0;
+  width: 90%;
+  padding: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  background-color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  z-index: 10;
+`;
+
+export const MarkerCardTitle = styled.Text`
+  font-weight: bold;
+  color: #322153;
+  font-size: 16px;
+`;
+
+export const MarkerCardAddress = styled.Text`
+  color: #322153;
+`;

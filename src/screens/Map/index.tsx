@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableNativeFeedback,
   ToastAndroid,
+  Text,
 } from "react-native";
 import MapView, { MAP_TYPES, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {
@@ -21,6 +22,9 @@ import {
   Location,
   LocationName,
   LocationSpan,
+  MarkerCard,
+  MarkerCardAddress,
+  MarkerCardTitle,
   MarkerContainer,
   MarkerImage,
   MarkerName,
@@ -36,10 +40,25 @@ export function Map() {
     longitudeDelta: 0,
   });
 
-  const [collectPoints, setCollectPoints] = useState([{}]);
+  const [collectPoints, setCollectPoints] = useState([
+    {
+      latitude: 0,
+      longitude: 0,
+      name: "",
+      image: 0,
+      category: 0,
+    },
+  ]);
+
+  const [showMarkers, setShowMarkers] = useState(false);
+
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const [selectedPoint, setSelectedPoint] = useState({});
 
   const updateRegion = async () => {
     const currentPosition = await getCurrentPositionAsync({ accuracy: 4 });
+
     setRegion({
       latitude: currentPosition.coords.latitude,
       longitude: currentPosition.coords.longitude,
@@ -49,9 +68,12 @@ export function Map() {
 
     setCollectPoints([
       {
+        id: 1,
         name: "Ponto A",
         latitude: currentPosition.coords.latitude,
         longitude: currentPosition.coords.longitude,
+        image: require("../../assets/icons/ponto-a.png"),
+        category: 1,
       },
     ]);
   };
@@ -82,32 +104,52 @@ export function Map() {
     });
   }, []);
 
-  const items = [
+  const categories = [
     {
+      id: 1,
       name: "Resíduos eletrônicos",
       icon: require("../../assets/icons/eletronicos.png"),
     },
     {
+      id: 2,
       name: "Resíduos orgânicos",
       icon: require("../../assets/icons/organicos.png"),
     },
     {
+      id: 3,
       name: "Óleo de cozinha",
       icon: require("../../assets/icons/oleo.png"),
     },
     {
+      id: 4,
       name: "Lâmpadas",
       icon: require("../../assets/icons/lampadas.png"),
     },
     {
+      id: 5,
       name: "Pilhas e baterias",
       icon: require("../../assets/icons/baterias.png"),
     },
     {
+      id: 6,
       name: "Papéis e papelão",
       icon: require("../../assets/icons/papeis.png"),
     },
   ];
+
+  const toggleCategory = (categoryId: number, selected: boolean) => {
+    if (selected) {
+      setSelectedCategories([...selectedCategories, categoryId]);
+    } else {
+      const index = selectedCategories.findIndex((id) => id == categoryId);
+      selectedCategories.splice(index, 1);
+      setSelectedCategories([...selectedCategories]);
+    }
+
+    if (selectedPoint.id) {
+      setSelectedPoint({});
+    }
+  };
 
   return (
     <>
@@ -122,23 +164,19 @@ export function Map() {
           </ChangeLocationButton>
         </TouchableNativeFeedback>
       </Header>
-      <List horizontal={true} style={{ zIndex: 2 }}>
-        {items.map((item, index) => (
-          <TouchableNativeFeedback key={index}>
-            <ItemList
-              style={{
-                marginLeft: index == 0 ? 20 : 0,
-                marginRight: 20,
-                elevation: 10,
-                marginBottom: 25,
-              }}
-            >
-              <ItemListIcon source={item.icon} />
-              <ItemListTitle>{item.name}</ItemListTitle>
-            </ItemList>
-          </TouchableNativeFeedback>
-        ))}
-      </List>
+      {!selectedPoint.id && (
+        <CategoriesList
+          categories={categories}
+          selectCategory={toggleCategory}
+          selectedCategories={selectedCategories}
+        />
+      )}
+      {selectedPoint.id && (
+        <MarkerCard style={{ elevation: 20 }}>
+          <MarkerCardTitle>Ponto A</MarkerCardTitle>
+          <MarkerCardAddress>Rua Max Hering, 175</MarkerCardAddress>
+        </MarkerCard>
+      )}
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -146,34 +184,85 @@ export function Map() {
         showsMyLocationButton={false}
         region={region}
         mapType={MAP_TYPES.STANDARD}
+        onMapReady={() => setShowMarkers(true)}
+        onPress={() => setSelectedPoint({})}
       >
-        {collectPoints.length > 0 &&
-          collectPoints.map((collectPoint: any, index) => {
-            <Marker
-              coordinate={{
-                latitude: collectPoint.latitude,
-                longitude: collectPoint.longitude,
-              }}
-              onPress={() =>
-                ToastAndroid.show(collectPoint.name, ToastAndroid.SHORT)
-              }
-              key={index}
-            >
-              <MarkerWrapper>
-                <MarkerContainer>
-                  <MarkerImage
-                    source={require("../../assets/icons/ponto-a.png")}
-                  />
-                  <MarkerName>{collectPoint.name}</MarkerName>
-                </MarkerContainer>
-                <MarkerPin
-                  source={require("../../assets/icons/marker-pin.png")}
-                />
-              </MarkerWrapper>
-            </Marker>;
-          })}
+        {showMarkers && (
+          <MapMarkerList
+            mapMarkers={collectPoints}
+            selectedCategories={selectedCategories}
+            selectMarker={setSelectedPoint}
+          />
+        )}
       </MapView>
     </>
+  );
+}
+
+function MapMarkerList({ mapMarkers, selectedCategories, selectMarker }) {
+  return mapMarkers
+    .filter((mapMarker) => selectedCategories.includes(mapMarker.category))
+    .map((collectPoint: any, index: number) => (
+      <MapMarker collectPoint={collectPoint} select={selectMarker} key={index}></MapMarker>
+    ));
+}
+
+function MapMarker({
+  collectPoint,
+  select,
+}) {
+  return (
+    <Marker
+      coordinate={{
+        latitude: collectPoint.latitude,
+        longitude: collectPoint.longitude,
+      }}
+      onPress={() => select(collectPoint)}
+    >
+      <MarkerWrapper>
+        <MarkerContainer>
+          <MarkerImage source={collectPoint.image} />
+          <MarkerName>{collectPoint.name}</MarkerName>
+        </MarkerContainer>
+        <MarkerPin source={require("../../assets/icons/marker-pin.png")} />
+      </MarkerWrapper>
+    </Marker>
+  );
+}
+
+function CategoriesList({ categories, selectCategory, selectedCategories }) {
+  return (
+    <List horizontal={true} style={{ zIndex: 2 }}>
+      {categories.map((category, index) =>
+        Category(category, index, selectCategory, selectedCategories.includes(category.id))
+      )}
+    </List>
+  );
+}
+
+function Category(item, index, select, initialSelectedState) {
+  const [selected, setSelected] = useState(initialSelectedState);
+
+  const handleSelect = () => {
+    setSelected(!selected);
+    select(item.id, !selected, index);
+  };
+
+  return (
+    <TouchableNativeFeedback key={index} onPress={handleSelect}>
+      <ItemList
+        style={{
+          marginLeft: index == 0 ? 20 : 0,
+          marginRight: 20,
+          elevation: 10,
+          marginBottom: 25,
+          backgroundColor: selected ? "#DBF7FF" : "#ffffff",
+        }}
+      >
+        <ItemListIcon source={item.icon} />
+        <ItemListTitle>{item.name}</ItemListTitle>
+      </ItemList>
+    </TouchableNativeFeedback>
   );
 }
 

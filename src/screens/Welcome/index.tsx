@@ -1,5 +1,4 @@
 import React from "react";
-import { RectButton } from "react-native-gesture-handler";
 import { Feather as Icon } from "@expo/vector-icons";
 import {
   Container,
@@ -20,7 +19,6 @@ import {
   Platform,
   TouchableNativeFeedback,
 } from "react-native";
-import { Login } from "../Login";
 
 export function Welcome({ navigation }) {
   return (
@@ -57,7 +55,7 @@ export function Welcome({ navigation }) {
                 <Text style={styles.buttonText}>Buscar</Text>
               </View>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={() => navigation.navigate(Login.name)}>
+            <TouchableNativeFeedback onPress={() => navigation.navigate("Login")}>
               <View style={[styles.button, styles.buttonSignIn]}>
                 <Text style={styles.buttonText}>Entrar</Text>
               </View>
