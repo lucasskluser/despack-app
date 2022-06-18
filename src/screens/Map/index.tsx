@@ -42,6 +42,7 @@ export function Map() {
 
   const [collectPoints, setCollectPoints] = useState([
     {
+      id: 0,
       latitude: 0,
       longitude: 0,
       name: "",
@@ -203,14 +204,15 @@ function MapMarkerList({ mapMarkers, selectedCategories, selectMarker }) {
   return mapMarkers
     .filter((mapMarker) => selectedCategories.includes(mapMarker.category))
     .map((collectPoint: any, index: number) => (
-      <MapMarker collectPoint={collectPoint} select={selectMarker} key={index}></MapMarker>
+      <MapMarker
+        collectPoint={collectPoint}
+        select={selectMarker}
+        key={index}
+      ></MapMarker>
     ));
 }
 
-function MapMarker({
-  collectPoint,
-  select,
-}) {
+function MapMarker({ collectPoint, select }) {
   return (
     <Marker
       coordinate={{
@@ -234,7 +236,12 @@ function CategoriesList({ categories, selectCategory, selectedCategories }) {
   return (
     <List horizontal={true} style={{ zIndex: 2 }}>
       {categories.map((category, index) =>
-        Category(category, index, selectCategory, selectedCategories.includes(category.id))
+        Category(
+          category,
+          index,
+          selectCategory,
+          selectedCategories.includes(category.id)
+        )
       )}
     </List>
   );
