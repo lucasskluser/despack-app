@@ -18,18 +18,36 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ToastAndroid,
   TouchableNativeFeedback,
+  ToastAndroid,
 } from "react-native";
 import { SignUp } from "../SignUp";
-import { Map } from "../Map";
+import { APIService } from "../../services/api.service";
+import { Formik } from "formik";
+import { AxiosError } from "axios";
 
 export function Login({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    // navigation.reset
-  }, []);
+  const handleLoginSubmit = async (email, password) => {
+    const authService: APIService = new APIService();
+    try {
+      const response = await authService.login(email, password);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Map", params: { token: response.token} }],
+      });
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        if (err.response?.status == 400) {
+          ToastAndroid.show('Credenciais inválidas', ToastAndroid.LONG);
+          return;
+        }
+
+        console.error(err);
+      }
+    }
+  };
 
   return (
     <Container>
@@ -40,57 +58,87 @@ export function Login({ navigation }) {
         />
       </WatermarkContainer>
       <ContentContainer>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <TouchableNativeFeedback onPress={() => navigation.goBack()}>
-            <View style={[styles.buttonBack]}>
-              <View style={styles.buttonBackIcon}>
-                <Text>
-                  <Icon name="arrow-left" color="#6c6c80" size={24} />
-                </Text>
-              </View>
-              <Text style={styles.buttonBackText}>TELA INICIAL</Text>
+        <TouchableNativeFeedback onPress={() => navigation.goBack()}>
+          <View style={[styles.buttonBack]}>
+            <View style={styles.buttonBackIcon}>
+              <Text>
+                <Icon name="arrow-left" color="#6c6c80" size={24} />
+              </Text>
             </View>
-          </TouchableNativeFeedback>
-          <Logo
-            resizeMode="contain"
-            source={require("../../assets/despack-logo.png")}
-          />
-          <Header>Participe da comunidade e ajude o planeta.</Header>
-          <Subheader>
-            Faça login para sugerir alterações e avaliar pontos de coleta.
-          </Subheader>
-          <Form>
-            <TextInput placeholder="Seu e-mail" style={{ marginBottom: 8 }} />
-            <InputGroup style={{ marginBottom: 8 }}>
-              <TextInput placeholder="Sua senha" />
-              <Icon
-                name={showPassword ? "eye" : "eye-off"}
-                color="#6c6c80"
-                size={24}
-                style={{ position: "absolute", right: 20 }}
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            </InputGroup>
-            <TouchableNativeFeedback
-              onPress={() => navigation.navigate(Map.name)}
-            >
-              <View style={[styles.button, styles.buttonSignIn]}>
-                <Text style={styles.buttonText}>Entrar</Text>
-              </View>
-            </TouchableNativeFeedback>
-            <TouchableNativeFeedback
-              onPress={() => navigation.navigate(SignUp.name)}
-            >
-              <View style={[styles.button, styles.buttonSignUp]}>
-                <Text style={[styles.buttonText, styles.buttonTextDark]}>
-                  CRIAR UMA CONTA
-                </Text>
-              </View>
-            </TouchableNativeFeedback>
-          </Form>
+            <Text style={styles.buttonBackText}>TELA INICIAL</Text>
+          </View>
+        </TouchableNativeFeedback>
+        <Logo
+          resizeMode="contain"
+          source={require("../../assets/despack-logo.png")}
+        />
+        <Header>Participe da comunidade e ajude o planeta.</Header>
+        <Subheader>
+          Faça login para sugerir alterações e avaliar pontos de coleta.
+        </Subheader>
+        <KeyboardAvoidingView>
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            onSubmit={(values) =>
+              handleLoginSubmit(values.email, values.password)
+            }
+          >
+            {({ handleChange, handleSubmit, isSubmitting, values }) => (
+              <Form>
+                <TextInput
+                  placeholder="Seu e-mail"
+                  style={{ marginBottom: 8 }}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  keyboardType={"email-address"}
+                />
+                <InputGroup style={{ marginBottom: 8 }}>
+                  <TextInput
+                    placeholder="Sua senha"
+                    value={values.password}
+                    secureTextEntry={true}
+                    onChangeText={handleChange("password")}
+                  />
+                  <Icon
+                    name={showPassword ? "eye-off" : "eye"}
+                    color="#6c6c80"
+                    size={24}
+                    style={{ position: "absolute", right: 20 }}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                </InputGroup>
+                <TouchableNativeFeedback
+                  onPress={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  <View
+                    style={[
+                      styles.button,
+                      styles.buttonSignIn,
+                      isSubmitting && styles.buttonSignInDisabled,
+                    ]}
+                  >
+                    {!isSubmitting && (
+                      <Text style={styles.buttonText}>Entrar</Text>
+                    )}
+                    {isSubmitting && (
+                      <Text style={styles.buttonText}>Entrando</Text>
+                    )}
+                  </View>
+                </TouchableNativeFeedback>
+                <TouchableNativeFeedback
+                  onPress={() => navigation.navigate(SignUp.name)}
+                  disabled={isSubmitting}
+                >
+                  <View style={[styles.button, styles.buttonSignUp]}>
+                    <Text style={[styles.buttonText, styles.buttonTextDark]}>
+                      CRIAR UMA CONTA
+                    </Text>
+                  </View>
+                </TouchableNativeFeedback>
+              </Form>
+            )}
+          </Formik>
         </KeyboardAvoidingView>
       </ContentContainer>
     </Container>
@@ -162,5 +210,10 @@ const styles = StyleSheet.create({
   buttonSignUp: {
     backgroundColor: "transparent",
     height: 40,
+  },
+
+  buttonSignInDisabled: {
+    backgroundColor: "#6C6C80",
+    opacity: 0.4,
   },
 });

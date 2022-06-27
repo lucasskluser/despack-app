@@ -11,6 +11,7 @@ import {
   Text,
 } from "react-native";
 import MapView, { MAP_TYPES, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { APIService } from "../../services/api.service";
 import {
   ChangeLocationButton,
   ChangeLocationText,
@@ -32,7 +33,7 @@ import {
   MarkerWrapper,
 } from "./style";
 
-export function Map() {
+export function Map({ navigation, route }) {
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
@@ -66,17 +67,6 @@ export function Map() {
       latitudeDelta: 0.008,
       longitudeDelta: 0.008,
     });
-
-    setCollectPoints([
-      {
-        id: 1,
-        name: "Ponto A",
-        latitude: currentPosition.coords.latitude,
-        longitude: currentPosition.coords.longitude,
-        image: require("../../assets/icons/ponto-a.png"),
-        category: 1,
-      },
-    ]);
   };
 
   useEffect(() => {
@@ -103,6 +93,13 @@ export function Map() {
         );
       }
     });
+
+    const apiService = new APIService();
+    const collectPointsRequest = apiService.getCollectPoints(
+      route.params.token
+    );
+
+    collectPointsRequest.then((response) => setCollectPoints(response));
   }, []);
 
   const categories = [
@@ -139,6 +136,8 @@ export function Map() {
   ];
 
   const toggleCategory = (categoryId: number, selected: boolean) => {
+    console.log(categoryId, collectPoints);
+
     if (selected) {
       setSelectedCategories([...selectedCategories, categoryId]);
     } else {
@@ -157,9 +156,9 @@ export function Map() {
       <Header style={styles.headerShadow}>
         <Location>
           <LocationSpan>Buscando pontos de coleta em</LocationSpan>
-          <LocationName>Blumenau, Santa Catarina</LocationName>
+          <LocationName>Jaraguá do Sul, Santa Catarina</LocationName>
         </Location>
-        <TouchableNativeFeedback>
+        <TouchableNativeFeedback disabled={true}>
           <ChangeLocationButton>
             <ChangeLocationText>Alterar</ChangeLocationText>
           </ChangeLocationButton>
@@ -174,8 +173,8 @@ export function Map() {
       )}
       {selectedPoint.id && (
         <MarkerCard style={{ elevation: 20 }}>
-          <MarkerCardTitle>Ponto A</MarkerCardTitle>
-          <MarkerCardAddress>Rua Max Hering, 175</MarkerCardAddress>
+          <MarkerCardTitle>{selectedPoint.nome}</MarkerCardTitle>
+          <MarkerCardAddress>{selectedPoint.endereco.logradouro}, {selectedPoint.endereco.numero}</MarkerCardAddress>
         </MarkerCard>
       )}
       <MapView
@@ -187,6 +186,7 @@ export function Map() {
         mapType={MAP_TYPES.STANDARD}
         onMapReady={() => setShowMarkers(true)}
         onPress={() => setSelectedPoint({})}
+        followsUserLocation={false}
       >
         {showMarkers && (
           <MapMarkerList
@@ -202,29 +202,35 @@ export function Map() {
 
 function MapMarkerList({ mapMarkers, selectedCategories, selectMarker }) {
   return mapMarkers
-    .filter((mapMarker) => selectedCategories.includes(mapMarker.category))
-    .map((collectPoint: any, index: number) => (
-      <MapMarker
-        collectPoint={collectPoint}
-        select={selectMarker}
-        key={index}
-      ></MapMarker>
-    ));
+    .filter((mapMarker) =>
+      selectedCategories.some((item) => mapMarker.tipoResiduos.map(m => m.id).includes(item))
+    )
+    .map((collectPoint: any, index: number) => {
+      console.log(collectPoint);
+
+      return (
+        <MapMarker
+          collectPoint={collectPoint}
+          select={selectMarker}
+          key={index}
+        ></MapMarker>
+      )
+    });
 }
 
 function MapMarker({ collectPoint, select }) {
   return (
     <Marker
       coordinate={{
-        latitude: collectPoint.latitude,
-        longitude: collectPoint.longitude,
+        latitude: collectPoint.endereco.latitude,
+        longitude: collectPoint.endereco.longitude,
       }}
       onPress={() => select(collectPoint)}
     >
       <MarkerWrapper>
         <MarkerContainer>
-          <MarkerImage source={collectPoint.image} />
-          <MarkerName>{collectPoint.name}</MarkerName>
+          {/* <MarkerImage source={collectPoint.foto} /> */}
+          <MarkerName>{collectPoint.nome}</MarkerName>
         </MarkerContainer>
         <MarkerPin source={require("../../assets/icons/marker-pin.png")} />
       </MarkerWrapper>
